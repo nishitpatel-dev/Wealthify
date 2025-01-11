@@ -21,8 +21,14 @@ import {
 } from "./ui/select";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
+import useFetch from "@/hooks/useFetch";
+import { createAccount } from "@/actions/dashboard";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const CreateAccountDrawer = ({ children }) => {
+  const [open, setOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -40,12 +46,29 @@ const CreateAccountDrawer = ({ children }) => {
     },
   });
 
+  const { data, error, loading, fn } = useFetch(createAccount);
+
+  useEffect(() => {
+    if (data && !loading) {
+      toast.success("Account created successfully");
+      reset();
+      setOpen(false);
+    }
+  }, [loading, data]);
+
+  useEffect(() => {
+    if(error)
+    {
+      toast.error(error.message || "Failed to create account");
+    }
+  }, [error])
+
   const onSubmit = async (data) => {
-    console.log(data);
+    await fn(data);
   };
 
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
@@ -140,8 +163,15 @@ const CreateAccountDrawer = ({ children }) => {
                   Cancel
                 </Button>
               </DrawerClose>
-              <Button type="submit" className="flex-1">
-                Create Account
+              <Button type="submit" className="flex-1" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </div>
           </form>
