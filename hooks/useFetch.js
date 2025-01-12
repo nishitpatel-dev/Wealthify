@@ -8,7 +8,7 @@ const useFetch = (cb) => {
   const fn = async (...args) => {
     setLoading(true);
     try {
-      const response = await cb(...args);
+      const response = await cb(...args);      
       setData(response);
     } catch (error) {
       setError(error);
