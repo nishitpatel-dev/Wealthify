@@ -4,7 +4,7 @@ import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-export async function getCurrentBudget(accoundId) {
+export async function getCurrentBudget(accountId) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error();
@@ -20,6 +20,7 @@ export async function getCurrentBudget(accoundId) {
     const budget = await db.budget.findFirst({
       where: {
         userId: user.id,
+        accountId
       },
     });
 
@@ -45,7 +46,7 @@ export async function getCurrentBudget(accoundId) {
           gte: startOfMonth,
           lte: endOfMonth,
         },
-        accoundId,
+        accountId,
       },
       _sum: {
         amount: true,
@@ -53,9 +54,9 @@ export async function getCurrentBudget(accoundId) {
     });
 
     return {
-      budget: budget ? { ...budget, amount: budget.amount.toFloat() } : null,
+      budget: budget ? { ...budget, amount: parseFloat(budget.amount) } : null,
       currentExpenses: expenses._sum.amount
-        ? expenses._sum.amount.toFloat()
+        ? parseFloat(expenses._sum.amount)
         : 0,
       success: true,
     };
@@ -67,7 +68,7 @@ export async function getCurrentBudget(accoundId) {
   }
 }
 
-export async function updateBudget(amount) {
+export async function updateBudget(amount, accountId) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error();
@@ -83,12 +84,14 @@ export async function updateBudget(amount) {
     const budget = await db.budget.upsert({
       where: {
         userId: user.id,
+        accountId
       },
       update: {
         amount,
       },
       create: {
         userId: user.id,
+        accountId,
         amount,
       },
     });
@@ -96,9 +99,9 @@ export async function updateBudget(amount) {
     revalidatePath("/dashboard");
 
     return {
-        data: { ...budget, amount: budget.amount.toFloat() },
-        success: true,
-      };
+      data: { ...budget, amount: parseFloat(budget.amount) },
+      success: true,
+    };
   } catch (error) {
     return {
       success: false,

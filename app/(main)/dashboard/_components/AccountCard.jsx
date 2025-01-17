@@ -32,9 +32,7 @@ export function AccountCard({ account }) {
   };
 
   useEffect(() => {
-    console.log("useEffect triggered", { data, loading });
     if (data?.success) {
-      console.log("Toast shown");
       toast.success("Default account updated successfully");
     }
   }, [data]);
