@@ -17,14 +17,26 @@ export async function changeDefaultAccount(accoundId) {
 
     if (!user) throw new Error("User not found");
 
-    await db.account.updateMany({
-      where: {
-        userId: user.id,
-        isDefault: true,
-      },
-      data: {
-        isDefault: false,
-      },
+    await db.$transaction(async (tx) => {
+      await tx.account.updateMany({
+        where: {
+          userId: user.id,
+          isDefault: true,
+        },
+        data: {
+          isDefault: false,
+        },
+      });
+
+      await tx.budget.updateMany({
+        where: {
+          userId: user.id,
+          isAccountDefaultBudget: true,
+        },
+        data: {
+          isAccountDefaultBudget: false,
+        },
+      });
     });
 
     const updatedAccount = await db.account.update({
@@ -34,6 +46,16 @@ export async function changeDefaultAccount(accoundId) {
       },
       data: {
         isDefault: true,
+      },
+    });
+
+    await db.budget.update({
+      where: {
+        userId: user.id,
+        accountId: accoundId,
+      },
+      data: {
+        isAccountDefaultBudget: true,
       },
     });
 
@@ -139,7 +161,9 @@ export async function bulkDeleteTrasactions(transactionIds) {
         },
       });
 
-      for (const [accountId, balanceChange] of Object.entries(accountBalanceChange)) {        
+      for (const [accountId, balanceChange] of Object.entries(
+        accountBalanceChange
+      )) {
         await tx.account.update({
           where: {
             id: accountId,
