@@ -10,7 +10,7 @@ import {
 } from "@react-email/components";
 
 export default function Email({
-  userName = "",
+  username = "",
   type = "budget-alert",
   data = {},
 }) {
@@ -25,7 +25,7 @@ export default function Email({
         <Body style={styles.body}>
           <Container style={styles.container}>
             <Heading style={styles.title}>Budget Alert</Heading>
-            <Text style={styles.text}>Hello {userName},</Text>
+            <Text style={styles.text}>Hello {username},</Text>
             <Text style={styles.text}>
               You&rsquo;ve used {data?.percentageUsed?.toFixed(1)}% of your
               monthly budget.

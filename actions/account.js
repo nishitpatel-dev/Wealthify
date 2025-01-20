@@ -149,7 +149,7 @@ export async function bulkDeleteTrasactions(transactionIds) {
       return acc;
     }, {});
 
-    console.log(accountBalanceChange);
+    // console.log(accountBalanceChange);
 
     await db.$transaction(async (tx) => {
       await tx.transaction.deleteMany({

@@ -63,6 +63,7 @@ export async function createAccount(data) {
 }
 
 export async function getAccounts() {
+  
   try {
     const { userId } = await auth();
     if (!userId) throw new Error();
