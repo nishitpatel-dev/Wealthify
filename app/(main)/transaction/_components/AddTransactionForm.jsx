@@ -27,6 +27,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { ReceiptScanner } from "./ReceiptScanner";
 
 const AddTransactionForm = ({ accounts, categories }) => {
   const {
@@ -44,6 +45,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
       description: "",
       accountId: accounts.find((ac) => ac.isDefault)?.id,
       date: new Date(),
+      category: "",
       isRecurring: false,
     },
   });
@@ -60,6 +62,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
   const isRecurring = watch("isRecurring");
   const date = watch("date");
   const accountId = watch("accountId");
+  const category = watch("category");
 
   const filteredCategories = categories.filter(
     (category) => category.type === type
@@ -72,6 +75,20 @@ const AddTransactionForm = ({ accounts, categories }) => {
     };
 
     await transactionFn(formData);
+  };
+
+  const handleScanComplete = (scannedData) => {
+    if (scannedData) {
+      setValue("amount", scannedData.amount.toString());
+      setValue("date", new Date(scannedData.date));
+      if (scannedData.description) {
+        setValue("description", scannedData.description);
+      }
+      if (scannedData.category) {
+        setValue("category", scannedData.category);
+      }
+      toast.success("Receipt scanned successfully");
+    }
   };
 
   useEffect(() => {
@@ -87,6 +104,8 @@ const AddTransactionForm = ({ accounts, categories }) => {
     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       {/* AI Recipt Scanner  */}
 
+
+      <ReceiptScanner onScanComplete={handleScanComplete} />
       <div className="space-y-2">
         <label className="text-sm font-medium">Type</label>
         <Select
@@ -161,7 +180,7 @@ const AddTransactionForm = ({ accounts, categories }) => {
 
       <div className="space-y-2">
         <label className="text-sm font-medium">Category</label>
-        <Select onValueChange={(value) => setValue("category", value)}>
+        <Select onValueChange={(value) => setValue("category", value)} value={category}>
           <SelectTrigger>
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
