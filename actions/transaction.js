@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-export async function createTransaction(data) {
+export async function createTransaction(data) {    
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
