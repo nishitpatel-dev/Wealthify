@@ -1,10 +1,13 @@
 import { getAccounts } from "@/actions/dashboard";
 import { defaultCategories } from "@/data/categories";
-import React from "react";
 import AddTransactionForm from "../_components/AddTransactionForm";
 
-const AddTransactionPage = async () => {
+const AddTransactionPage = async ({ searchParam }) => {
   const accounts = await getAccounts();
+  const editId = searchParam?.edit;
+  // if (editId) {
+  //   const currentTransaction = await getTransaction();
+  // }
 
   return (
     <>
