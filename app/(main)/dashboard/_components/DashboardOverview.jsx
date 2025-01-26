@@ -6,6 +6,17 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import React, { useState } from "react";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+
+const COLORS = [
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#96CEB4",
+    "#FFEEAD",
+    "#D4A5A5",
+    "#9FA8DA",
+  ];
 
 const DashboardOverview = ({ accounts, transactions }) => {
   const [selectedAccountId, setSelectedAccountId] = useState(
@@ -17,6 +28,34 @@ const DashboardOverview = ({ accounts, transactions }) => {
   );
 
   const recentTransactions = accountTransactions.slice(0, 5);
+
+  const currentDate = new Date();
+  const currentMonthExpenses = accountTransactions.filter((t) => {
+    const transactionDate = new Date(t.date);
+    return (
+      t.type === "EXPENSE" &&
+      transactionDate.getMonth() === currentDate.getMonth() &&
+      transactionDate.getFullYear() === currentDate.getFullYear()
+    );
+  });
+
+  // Group expenses by category
+  const expensesByCategory = currentMonthExpenses.reduce((acc, transaction) => {
+    const category = transaction.category;
+    if (!acc[category]) {
+      acc[category] = 0;
+    }
+    acc[category] += transaction.amount;
+    return acc;
+  }, {});
+
+  // Format data for pie chart
+  const pieChartData = Object.entries(expensesByCategory).map(
+    ([category, amount]) => ({
+      name: category,
+      value: amount,
+    })
+  );
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -76,13 +115,60 @@ const DashboardOverview = ({ accounts, transactions }) => {
                       ) : (
                         <ArrowUpRight className="mr-1 h-4 w-4" />
                       )}
-                      ${transaction.amount.toFixed(2)}
+                      ₹{transaction.amount.toFixed(2)}
                     </div>
                   </div>
                 </div>
               ))
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-normal">
+            Monthly Expense Breakdown
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 pb-5">
+          {pieChartData.length === 0 ? (
+            <p className="text-center text-muted-foreground py-4">
+              No expenses this month
+            </p>
+          ) : (
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieChartData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, value }) => `${name.charAt(0).toUpperCase() + name.slice(1)}: ₹${value.toFixed(2)}`}
+                  >
+                    {pieChartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(toolTipValue, key) => [`₹${toolTipValue.toFixed(2)}`, key.charAt(0).toUpperCase() + key.slice(1),]}
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--popover))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "var(--radius)",
+                    }}
+                  />
+                  <Legend formatter={(legendValue) => legendValue.charAt(0).toUpperCase() + legendValue.slice(1)} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
