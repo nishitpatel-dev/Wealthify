@@ -1,8 +1,9 @@
 import Header from "@/components/Header";
-import "./globals.css";
-import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import "./globals.css";
+import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className={`${inter.className}`}>
           <Header />
+          <NextTopLoader height={5} color="linear-gradient(to bottom right, #2563eb, #7e22ce)" crawl={true} />
           <main className="min-h-screen">{children}</main>
           <Toaster richColors />
           <footer className="bg-blue-50 py-12">

@@ -63,6 +63,15 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { BarLoader } from "react-spinners";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const RECURRING_INTERVALS = {
   DAILY: "Daily",
@@ -82,6 +91,7 @@ export default function TransactionTable({ transactions }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypefilter] = useState("");
   const [recurringFilter, setRecurringFilter] = useState("");
+  const [page, setPage] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
 
   const { data, fn, loading } = useFetch(bulkDeleteTrasactions);
@@ -132,7 +142,7 @@ export default function TransactionTable({ transactions }) {
     setSelectedIds([]);
   };
 
-  const filteredAndSortedTransactions = useMemo(() => {
+  let filteredAndSortedTransactions = useMemo(() => {
     let result = [...transactions];
 
     // Applying Search Filter, Recurring Filter, and Type Filter
@@ -178,8 +188,12 @@ export default function TransactionTable({ transactions }) {
       return sortConfig.direction == "asc" ? comparison : -comparison;
     });
 
+    // Applying Pagination
+    const endPage = page * 10;
+    result = result.slice(endPage - 10, endPage);
+
     return result;
-  }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
+  }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig, page]);
 
   return (
     <div className="space-y-4">
@@ -487,6 +501,67 @@ export default function TransactionTable({ transactions }) {
             )}
           </TableBody>
         </Table>
+
+        {transactions.length > 10 ? (
+          <Pagination className={"my-6"}>
+            <PaginationContent>
+              {page <= 1 ? null : (
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setPage(page - 1)}
+                    className={"cursor-pointer"}
+                  />
+                </PaginationItem>
+              )}
+
+              <PaginationItem>
+                <PaginationLink
+                  onClick={() => setPage(page)}
+                  className={
+                    "cursor-pointer bg-black text-white hover:bg-black hover:text-white rounded-full hover:rounded-full"
+                  }
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+
+              {page >=
+              (transactions.length % 10 != 0
+                ? parseInt(transactions.length / 10 + 1)
+                : parseInt(transactions.length / 10)) ? null : (
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => setPage(page + 1)}
+                    className={cn("cursor-pointer hover:rounded-full")}
+                  >
+                    {page + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+
+              {page >=
+              (transactions.length % 10 != 0
+                ? parseInt(transactions.length / 10)
+                : parseInt(transactions.length / 10 - 1)) ? null : (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+
+              {page >=
+              (transactions.length % 10 != 0
+                ? parseInt(transactions.length / 10 + 1)
+                : parseInt(transactions.length / 10)) ? null : (
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setPage(page + 1)}
+                    className={"cursor-pointer"}
+                  />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
+        ) : null}
       </div>
     </div>
   );

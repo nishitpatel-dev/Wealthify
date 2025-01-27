@@ -109,8 +109,8 @@ const CreateAccountDrawer = ({ children }) => {
                   <SelectValue placeholder="Select Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="CURRENT">Current</SelectItem>
-                  <SelectItem value="SAVINGS">Savings</SelectItem>
+                  <SelectItem value="CURRENT" className="cursor-pointer">Current</SelectItem>
+                  <SelectItem value="SAVINGS" className="cursor-pointer">Savings</SelectItem>
                 </SelectContent>
               </Select>
 

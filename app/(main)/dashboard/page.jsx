@@ -4,9 +4,12 @@ import CreateAccountDrawer from "@/components/CreateAccountDrawer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { AccountCard } from "./_components/AccountCard";
-import BudgetProgress from "./_components/BudgetProgress";
-import { Suspense } from "react";
+import { lazy, Suspense } from "react";
 import DashboardOverview from "./_components/DashboardOverview";
+import BudgetProgress from "./_components/BudgetProgress";
+
+
+// const BudgetProgress = lazy("./_components/BudgetProgress.jsx");
 
 const DashBoard = async () => {
   const accounts = await getAccounts();
@@ -21,11 +24,13 @@ const DashBoard = async () => {
 
   return (
     <div className="space-y-8">
-      <BudgetProgress
-        initialBudget={budgetData?.budget}
-        currentExpenses={budgetData?.currentExpenses || 0}
-        accountId={defaultAccount.id}
-      />
+      <Suspense fallback={"Loading..."}>
+        <BudgetProgress
+          initialBudget={budgetData?.budget}
+          currentExpenses={budgetData?.currentExpenses || 0}
+          accountId={defaultAccount.id}
+        />
+      </Suspense>
 
       <Suspense fallback={"Loading..."}>
         <DashboardOverview
