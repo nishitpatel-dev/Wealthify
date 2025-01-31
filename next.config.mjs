@@ -7,6 +7,7 @@ const nextConfig = {
         hostname: "randomuser.me",
       },
     ],
+    formats: ["image/webp"],
   },
   experimental: {
     serverActions: {

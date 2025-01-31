@@ -1,22 +1,35 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import React, { useState } from "react";
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { useState } from "react";
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
 
 const COLORS = [
-    "#FF6B6B",
-    "#4ECDC4",
-    "#45B7D1",
-    "#96CEB4",
-    "#FFEEAD",
-    "#D4A5A5",
-    "#9FA8DA",
-  ];
+  "#FF6B6B",
+  "#4ECDC4",
+  "#45B7D1",
+  "#96CEB4",
+  "#FFEEAD",
+  "#D4A5A5",
+  "#9FA8DA",
+];
 
 const DashboardOverview = ({ accounts, transactions }) => {
   const [selectedAccountId, setSelectedAccountId] = useState(
@@ -74,7 +87,11 @@ const DashboardOverview = ({ accounts, transactions }) => {
             </SelectTrigger>
             <SelectContent>
               {accounts.map((account) => (
-                <SelectItem key={account.id} value={account.id} className="cursor-pointer">
+                <SelectItem
+                  key={account.id}
+                  value={account.id}
+                  className="cursor-pointer"
+                >
                   {account.name}
                 </SelectItem>
               ))}
@@ -147,7 +164,9 @@ const DashboardOverview = ({ accounts, transactions }) => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, value }) => `${name.charAt(0).toUpperCase() + name.slice(1)}: ₹${value.toFixed(2)}`}
+                    label={({ name, value }) =>
+                      `${name.charAt(0).toUpperCase() + name.slice(1)}: ₹${value.toFixed(2)}`
+                    }
                   >
                     {pieChartData.map((entry, index) => (
                       <Cell
@@ -157,14 +176,21 @@ const DashboardOverview = ({ accounts, transactions }) => {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(toolTipValue, key) => [`₹${toolTipValue.toFixed(2)}`, key.charAt(0).toUpperCase() + key.slice(1),]}
+                    formatter={(toolTipValue, key) => [
+                      `₹${toolTipValue.toFixed(2)}`,
+                      key.charAt(0).toUpperCase() + key.slice(1),
+                    ]}
                     contentStyle={{
                       backgroundColor: "hsl(var(--popover))",
                       border: "1px solid hsl(var(--border))",
                       borderRadius: "var(--radius)",
                     }}
                   />
-                  <Legend formatter={(legendValue) => legendValue.charAt(0).toUpperCase() + legendValue.slice(1)} />
+                  <Legend
+                    formatter={(legendValue) =>
+                      legendValue.charAt(0).toUpperCase() + legendValue.slice(1)
+                    }
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
