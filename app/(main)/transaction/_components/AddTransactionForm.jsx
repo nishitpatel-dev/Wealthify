@@ -1,6 +1,6 @@
 "use client";
 
-import { createTransaction } from "@/actions/transaction";
+import { createTransaction, updateTransaction } from "@/actions/transaction";
 import { transactionSchema } from "@/app/lib/schema";
 import CreateAccountDrawer from "@/components/CreateAccountDrawer";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { ReceiptScanner } from "./ReceiptScanner";
 
-const AddTransactionForm = ({ accounts, categories }) => {
+const AddTransactionForm = ({ accounts, categories, currentTransaction }) => {
   const {
     register,
     handleSubmit,
@@ -39,24 +39,36 @@ const AddTransactionForm = ({ accounts, categories }) => {
     reset,
   } = useForm({
     resolver: zodResolver(transactionSchema),
-    defaultValues: {
-      type: "EXPENSE",
-      amount: "",
-      description: "",
-      accountId: accounts.find((ac) => ac.isDefault)?.id,
-      date: new Date(),
-      category: "",
-      isRecurring: false,
-    },
+    defaultValues: currentTransaction
+      ? {
+          type: currentTransaction.type,
+          amount: currentTransaction.amount.toString(),
+          description: currentTransaction.description,
+          accountId: currentTransaction.accountId,
+          date: new Date(currentTransaction.date),
+          category: currentTransaction.category,
+          isRecurring: currentTransaction.isRecurring,
+        }
+      : {
+          type: "EXPENSE",
+          amount: "",
+          description: "",
+          accountId: accounts.find((ac) => ac.isDefault)?.id,
+          date: new Date(),
+          category: "",
+          isRecurring: false,
+        },
   });
 
   const router = useRouter();
+
+  console.log(currentTransaction);
 
   const {
     loading: transactionLoading,
     fn: transactionFn,
     data: transactionResult,
-  } = useFetch(createTransaction);
+  } = useFetch(currentTransaction ? updateTransaction : createTransaction);
 
   const type = watch("type");
   const isRecurring = watch("isRecurring");
@@ -69,15 +81,20 @@ const AddTransactionForm = ({ accounts, categories }) => {
   );
 
   const onSubmit = async (data) => {
+
+    console.log(data);
+
     const formData = {
       ...data,
       amount: parseFloat(data.amount),
     };
 
-    await transactionFn(formData);
+    currentTransaction
+      ? await transactionFn(currentTransaction.id, formData)
+      : await transactionFn(formData);
   };
 
-  const handleScanComplete = (scannedData) => {    
+  const handleScanComplete = (scannedData) => {
     if (scannedData) {
       setValue("amount", scannedData.amount.toString());
       setValue("date", new Date(scannedData.date));
@@ -92,9 +109,12 @@ const AddTransactionForm = ({ accounts, categories }) => {
   };
 
   useEffect(() => {
-    
     if (transactionResult?.success && !transactionLoading) {
-      toast.success("Transaction created successfully");
+      toast.success(
+        currentTransaction
+          ? "Transaction updated successfully"
+          : "Transaction created successfully"
+      );
       reset();
       router.push(`/account/${transactionResult.data.accountId}`);
     }
@@ -103,7 +123,6 @@ const AddTransactionForm = ({ accounts, categories }) => {
   return (
     <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       {/* AI Recipt Scanner  */}
-
 
       <ReceiptScanner onScanComplete={handleScanComplete} />
       <div className="space-y-2">
@@ -180,7 +199,10 @@ const AddTransactionForm = ({ accounts, categories }) => {
 
       <div className="space-y-2">
         <label className="text-sm font-medium">Category</label>
-        <Select onValueChange={(value) => setValue("category", value)} value={category}>
+        <Select
+          onValueChange={(value) => setValue("category", value)}
+          value={category}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
@@ -296,8 +318,12 @@ const AddTransactionForm = ({ accounts, categories }) => {
           {transactionLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating Transaction...
+              {currentTransaction
+                ? "Updating Transaction..."
+                : "Creating Transaction..."}
             </>
+          ) : currentTransaction ? (
+            "Update Transaction"
           ) : (
             "Create Transaction"
           )}
