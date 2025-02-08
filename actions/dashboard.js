@@ -74,7 +74,6 @@ export async function getAccounts() {
     });
 
     if (!user) throw new Error("User not found");
-
     const accounts = await db.account.findMany({
       where: {
         userId: user.id,

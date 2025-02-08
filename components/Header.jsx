@@ -1,7 +1,3 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   SignedIn,
   SignedOut,
@@ -12,17 +8,11 @@ import {
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { LayoutDashboard, PenBox } from "lucide-react";
+import { checkUser } from "@/lib/checkUser";
 
-const Header = () => {
-  const router = useRouter();
-  const { isLoaded, isSignedIn, user } = useAuth();
+const Header = async () => {
 
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push("/");
-    }
-  }, [isLoaded, isSignedIn, router]);
-  
+  await checkUser();
 
   return (
     <div className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
