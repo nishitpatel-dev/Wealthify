@@ -14,8 +14,6 @@ const AddTransactionPage = async ({ searchParams }) => {
     currentTransaction = await getTransaction(edit);
   }
 
-  // console.log(currentTransaction);
-
   return (
     <>
       <div className="max-w-3xl mx-auto px-5">

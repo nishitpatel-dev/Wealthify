@@ -62,8 +62,6 @@ const AddTransactionForm = ({ accounts, categories, currentTransaction }) => {
 
   const router = useRouter();
 
-  console.log(currentTransaction);
-
   const {
     loading: transactionLoading,
     fn: transactionFn,
@@ -81,8 +79,6 @@ const AddTransactionForm = ({ accounts, categories, currentTransaction }) => {
   );
 
   const onSubmit = async (data) => {
-
-    console.log(data);
 
     const formData = {
       ...data,
