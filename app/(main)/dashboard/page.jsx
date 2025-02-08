@@ -7,6 +7,8 @@ import { AccountCard } from "./_components/AccountCard";
 import BudgetProgress from "./_components/BudgetProgress";
 import DashboardOverview from "./_components/DashboardOverview";
 
+export const dynamic = 'force-dynamic';
+
 const DashBoard = async () => {
   const accounts = await getAccounts();
   const transactions = await getDashboardData();
