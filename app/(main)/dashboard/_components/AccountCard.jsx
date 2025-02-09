@@ -22,6 +22,7 @@ export function AccountCard({ account }) {
 
   const handleChangeDefault = async (event) => {
     event.preventDefault();
+    event.stopPropagation();
 
     if (isDefault) {
       toast.warning("You need at least one default account");
