@@ -1,23 +1,19 @@
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  useAuth,
-} from "@clerk/nextjs";
+import { checkUser } from "@/lib/checkUser";
+import CheckValidUser from "@/lib/checkValidUser";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { LayoutDashboard, PenBox } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { LayoutDashboard, PenBox } from "lucide-react";
-import { checkUser } from "@/lib/checkUser";
 
 const Header = async () => {
-
   await checkUser();
 
   return (
     <div className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href={"/"}>{/* <Image /> {Logo Here} */}</Link>
+        
+        <CheckValidUser />
 
         <div className="flex items-center space-x-4">
           <SignedIn>

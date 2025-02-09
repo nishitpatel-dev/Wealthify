@@ -220,8 +220,13 @@ export async function updateTransaction(id, data) {
 
     if (!user) throw new Error("User not found");
 
-    const newBalanceChange =
-      data.type === "EXPENSE" ? -data.amount : data.amount;
+    // Finding the current balance (amount)
+
+    const { amount } = await db.transaction.findUnique({
+      where: {
+        id,
+      },
+    });
 
     const transaction = await db.$transaction(async (tx) => {
       const updated = await tx.transaction.update({
@@ -238,11 +243,13 @@ export async function updateTransaction(id, data) {
         },
       });
 
+      const finalAmount = data.amount - amount;
+
       await tx.account.update({
         where: { id: data.accountId },
         data: {
           balance: {
-            increment: newBalanceChange,
+            increment: -finalAmount,
           },
         },
       });

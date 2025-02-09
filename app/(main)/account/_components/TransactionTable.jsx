@@ -50,19 +50,14 @@ import { categoryColors } from "@/data/categories";
 import { cn } from "@/lib/utils";
 // import useFetch from "@/hooks/use-fetch";
 import { bulkDeleteTrasactions } from "@/actions/account";
-import useFetch from "@/hooks/useFetch";
-import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTitle
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import { BarLoader } from "react-spinners";
 import {
   Pagination,
   PaginationContent,
@@ -72,6 +67,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import useFetch from "@/hooks/useFetch";
+import { BarLoader } from "react-spinners";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const RECURRING_INTERVALS = {
   DAILY: "Daily",
@@ -81,7 +80,9 @@ const RECURRING_INTERVALS = {
 };
 
 export default function TransactionTable({ transactions }) {
+
   const router = useRouter();
+
   const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({
     field: "date",

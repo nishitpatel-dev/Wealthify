@@ -9,17 +9,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { endOfDay, format, startOfDay, subDays } from "date-fns";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Legend,
-  Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from "recharts";
 
 const DATE_RANGES = {
@@ -31,7 +30,7 @@ const DATE_RANGES = {
 };
 
 const AccountChart = ({ transactions }) => {
-  const [dateRange, setDateRange] = useState("1M");
+ const [dateRange, setDateRange] = useState("1M");
 
   const filterData = useMemo(() => {
     const range = DATE_RANGES[dateRange];
