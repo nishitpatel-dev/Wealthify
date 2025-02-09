@@ -14,10 +14,9 @@ const DashBoard = async () => {
   const transactions = await getDashboardData();
 
   const defaultAccount = accounts.data?.find((account) => account.isDefault);
-
   let budgetData = null;
   if (defaultAccount) {
-    budgetData = await getCurrentBudget(defaultAccount.id);
+    budgetData = await getCurrentBudget(defaultAccount?.id);
   }
 
   return (
@@ -25,7 +24,7 @@ const DashBoard = async () => {
       <BudgetProgress
         initialBudget={budgetData?.budget}
         currentExpenses={budgetData?.currentExpenses || 0}
-        accountId={defaultAccount.id}
+        accountId={defaultAccount?.id}
       />
 
       <DashboardOverview
