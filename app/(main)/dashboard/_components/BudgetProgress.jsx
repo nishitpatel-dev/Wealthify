@@ -30,7 +30,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses, accountId }) => {
   } = useFetch(updateBudget);
 
   const percentUsed = initialBudget
-    ? (currentExpenses / initialBudget.amount) * 100
+    ? (currentExpenses / initialBudget?.amount) * 100
     : 0;
 
   const handleUpdateBudget = async () => {
@@ -108,7 +108,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses, accountId }) => {
                   {initialBudget
                     ? `₹${currentExpenses.toFixed(
                         2
-                      )} of ₹${initialBudget.amount.toFixed(2)} spent`
+                      )} of ₹${initialBudget?.amount.toFixed(2)} spent`
                     : "No budget set"}
                 </CardDescription>
                 <Button
