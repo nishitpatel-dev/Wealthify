@@ -23,7 +23,7 @@ const DashBoard = async () => {
   return (
     <div className="space-y-8">
       <BudgetProgress
-        initialBudget={budgetData?.budget || 0}
+        initialBudget={budgetData?.budget}
         currentExpenses={budgetData?.currentExpenses || 0}
         accountId={defaultAccount?.id}
       />
