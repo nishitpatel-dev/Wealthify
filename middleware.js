@@ -10,6 +10,8 @@ const isProtectedRoute = createRouteMatcher([
 const aj = arcjet({
   key: process.env.ARCJET_KEY,
   characteristics: ["ip", "userId", "userAgent"],
+  // Trust all proxies so that Arcjet will extract the real client IP in Production
+  proxies: ["0.0.0.0/0"],
   rules: [
     // Shield protection for content and security
     shield({
