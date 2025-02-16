@@ -9,23 +9,23 @@ const isProtectedRoute = createRouteMatcher([
 
 const aj = arcjet({
   key: process.env.ARCJET_KEY,
-  // Use the built-in characteristic name for IP address.
-  characteristics: ["ip.src", "userId", "userAgent"],
-  // Trust all proxies so that Arcjet will extract the real client IP from the forwarded headers.
-  // (Replace with your actual proxy range if possible.)
+  characteristics: ["ip", "userId", "userAgent"],
+  // Trust all proxies so that Arcjet will extract the real client IP
   proxies: ["0.0.0.0/0"],
   rules: [
+    // Shield protection for content and security
     shield({
       mode: "LIVE",
     }),
     detectBot({
-      mode: "LIVE", // Use "DRY_RUN" to log decisions without blocking.
+      mode: "LIVE", // will block requests. Use "DRY_RUN" to log only
       allow: [
-        "CATEGORY:SEARCH_ENGINE",
-        "GO_HTTP",
-        "CLOUD_HOSTING",
+        "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
+        "GO_HTTP", // For Inngest
+        "CLOUD_HOSTING", // For hosting purpose
         "PROXY",
-        "CLOUD_COMPUTING",
+        "CLOUD_COMPUTING", // For hosting purpose
+        // See the full list at https://arcjet.com/bot-list
       ],
     }),
   ],
@@ -33,34 +33,21 @@ const aj = arcjet({
 
 const clerk = clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
+
   if (!userId && isProtectedRoute(req)) {
     const { redirectToSignIn } = await auth();
+
     return redirectToSignIn();
   }
 });
 
-// Custom middleware to extract the client IP and attach it to the request.
-export default async function middleware(req, ev) {
-  // Attempt to extract the client IP from headers or the socket.
-  const clientIp =
-    req.headers.get("x-forwarded-for") ||
-    req.headers.get("x-real-ip") ||
-    req.socket?.remoteAddress;
-  console.log("Client IP:", clientIp);
-
-  // Attach the IP in two common properties so Arcjet can detect it.
-  req.clientIp = clientIp;
-  req.ip = clientIp;
-
-  // Proceed with Arcjet and Clerk middleware.
-  return createMiddleware(aj, clerk)(req, ev);
-}
+export default createMiddleware(aj, clerk);
 
 export const config = {
   matcher: [
-    // Run middleware on all routes except for Next.js internals and static assets.
+    // Skip Next.js internals and all static files, unless found in search params
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes.
+    // Always run for API routes
     "/(api|trpc)(.*)",
   ],
 };
