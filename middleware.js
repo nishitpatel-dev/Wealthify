@@ -20,6 +20,8 @@ const aj = arcjet({
       allow: [
         "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
         "GO_HTTP", // For Inngest
+        "CLOUD_HOSTING", // For hosting purpose
+        "PROXY", // For hosting purpose
         // See the full list at https://arcjet.com/bot-list
       ],
     }),
