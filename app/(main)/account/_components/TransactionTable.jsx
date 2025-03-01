@@ -218,7 +218,7 @@ export default function TransactionTable({ transactions }) {
 
         {/* All Other Terms After Search On Filters Section */}
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Select
             value={typeFilter}
             onValueChange={(value) => {

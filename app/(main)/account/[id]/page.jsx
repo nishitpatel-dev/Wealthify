@@ -19,7 +19,7 @@ const AccountPage = async ({ params }) => {
 
   return (
     <div className="space-y-8 px-5">
-      <div className="flex gap-4 items-end justify-between">
+      <div className="flex gap-4 items-end justify-between flex-wrap">
         <div>
           <h1 className="text-5xl sm:text-6xl font-bold tracking-tight gradient-title capitalize">
             {account.name}
