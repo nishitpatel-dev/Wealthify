@@ -4,6 +4,8 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { LayoutDashboard, PenBox } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import Logo from "@/public/HeaderLogo.png";
+import Image from "next/image";
 
 const Header = async () => {
   await checkUser();
@@ -11,8 +13,16 @@ const Header = async () => {
   return (
     <div className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href={"/"}>{/* <Image /> {Logo Here} */}</Link>
-        
+        <Link href={"/"}>
+          <Image
+            src={Logo}
+            alt="Welthify Logo"
+            width={200}
+            height={60}
+            className="h-12 w-auto object-contain"
+          />
+        </Link>
+
         <CheckValidUser />
 
         <div className="flex items-center space-x-4">
